@@ -1,26 +1,18 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+        stage('BuildVue') {
             steps {
-                withMaven(maven:'maven3'){
-                            sh 'mvn -B -DskipTests clean package'
-                    }
+                  sh 'cd dashboard & npm i'
             }
         }
-        stage('Test') {
+        
+        stage('API') {
             steps {
-                withMaven(maven:'maven3'){
-                sh 'mvn test -Dversion=${BUILD_NUMBER}'
-                archiveArtifacts 'target/surefire-reports/*.xml'
-                }
-            }
-            post {
-                always {
-                    tapdTestReport frameType: 'JUnit', onlyNewModified: true, reportPath: 'target/surefire-reports/*.xml'
-                }
+                  sh 'cd api & npm i'
             }
         }
+        
         stage('analysis') {
             steps {
                 withSonarQubeEnv('DevOpsSonarQube') {
@@ -31,17 +23,9 @@ pipeline {
             }
         }
         
-        stage('Package'){
-            steps{
-                withMaven(maven:'maven3'){
-                sh 'mvn deploy'
-                    }
-                //nexusPublisher nexusInstanceId: 'DevOpsNexus', nexusRepositoryId: 'maven-releases', packages: [[$class: 'MavenPackage', mavenAssetList: [[classifier: '', extension: '', filePath: 'target/my-app-2.0.jar']], mavenCoordinate: [artifactId: 'my-app', groupId: 'william', packaging: 'jar', version: '${BUILD_NUMBER}']]]
-            }
-        }
-        stage('Deliver') {
+        stage('Deploy') {
             steps {
-                sh 'sh ./deliver.sh'
+                sh 'serverless remove & serverless'
             }
         }
     }
