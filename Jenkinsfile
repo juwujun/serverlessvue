@@ -13,14 +13,6 @@ pipeline {
             }
         }
         
-        stage('analysis') {
-            steps {
-                withSonarQubeEnv('DevOpsSonarQube') {
-                        sh '${scannerHome}/bin/sonar-scanner'
-                }
-            }
-        }
-        
         stage('Deploy') {
             steps {
                 sh 'serverless remove & serverless'
