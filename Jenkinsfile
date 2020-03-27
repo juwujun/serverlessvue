@@ -3,7 +3,6 @@ pipeline {
     stages {
         stage('BuildVue') {
             steps {
-                  sh 'source /etc/profile'
                   sh 'cd dashboard && npm i && cd ../'
             }
         }
