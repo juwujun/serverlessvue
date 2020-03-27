@@ -7,9 +7,17 @@ pipeline {
             }
         }
         
-        stage('API') {
+        stage('BuildAPI') {
             steps {
                   sh 'cd api && npm i && cd ../'
+            }
+        }
+        
+        stage('Analysis') {
+            steps {
+                withSonarQubeEnv('DevOpsSonarQube') {
+                        sh 'sonar-scanner'
+                }
             }
         }
         
