@@ -15,7 +15,7 @@ pipeline {
         
         stage('Deploy') {
             steps {
-                sh '. /etc/profile && serverless remove && serverless'
+                sh 'Deploy.sh'
             }
         }
     }
